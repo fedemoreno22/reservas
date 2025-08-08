@@ -1,0 +1,22 @@
+{% extends 'turnos/base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h3>Configurar Horarios Disponibles</h3>
+    <form method="post" class="mb-4">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Guardar</button>
+    </form>
+
+    <h5>Horarios cargados</h5>
+    <ul class="list-group">
+        {% for horario in horarios %}
+        <li class="list-group-item">
+            {{ horario }}
+        </li>
+        {% empty %}
+        <li class="list-group-item">No hay horarios configurados aún.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

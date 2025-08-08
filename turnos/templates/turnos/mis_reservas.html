@@ -1,0 +1,63 @@
+{% extends 'turnos/base.html' %}
+{% block content %}
+<h2>Mis reservas</h2>
+
+{% if reservas %}
+    <form method="get" class="row g-3 mb-3">  
+        <div class="col-auto">
+        <input type="date" name="fecha" class="form-control" value="{{ fecha_busqueda }}">
+        </div>
+        <div class="col-auto">
+        <select name="cancha" class="form-select">
+            <option value="">Todas las canchas</option>
+            {% for cancha in canchas %}
+            <option value="{{ cancha.id }}" {% if cancha.id|stringformat:"s" == cancha_id %}selected{% endif %}>
+                {{ cancha.nombre }}
+            </option>
+            {% endfor %}
+        </select>
+        </div>
+        <div class="col-auto">
+        <button type="submit" class="btn btn-primary">Filtrar</button>
+        <a href="{% url 'mis_reservas' %}" class="btn btn-secondary">Quitar filtros</a>
+        <a href="{% url 'reservar_turno' %}" class="btn btn-success">Reservar</a>
+        </div>
+    </form>
+
+  
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Cliente</th>
+        <th>Cancha</th>
+        <th>Fecha</th>
+        <th>Hora inicio</th>
+        <th>Hora fin</th>
+        <th>Acción</th> 
+      </tr>
+    </thead>
+    <tbody>
+      {% for reserva in reservas %}
+        <tr>
+          <td>{{ reserva.usuario.username }}</td>
+          <td>{{ reserva.cancha.nombre }}</td>
+          <td>{{ reserva.fecha|date:"d/m/Y" }}</td>
+          <td>{{ reserva.hora_inicio }}</td>
+          <td>{{ reserva.hora_fin }}</td>
+          <td>
+            <form method="post" action="{% url 'cancelar_reserva' reserva.id %}" onsubmit="return confirmarCancelacion();">
+                {% csrf_token %}
+                <a href="{% url 'editar_reserva' reserva.id %}" class="btn btn-sm btn-warning">Editar</a>
+                <button type="submit" class="btn btn-sm btn-danger">Cancelar</button>
+              </form>              
+          </td>
+          
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>No tenés reservas todavía.</p>
+{% endif %}
+
+{% endblock %}

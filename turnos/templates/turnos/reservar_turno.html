@@ -1,0 +1,117 @@
+{% extends 'turnos/base.html' %}
+{% load form_extras %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header bg-primary text-white text-center rounded-top-4">
+                    <h4 class="mb-0">Reservar Cancha</h4>
+                </div>
+                <div class="card-body p-4">
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    {% if form.errors %}
+                      <div class="alert alert-danger">
+                          <strong>Ocurrieron errores al intentar reservar:</strong>
+                          <ul>
+                              {% for field in form %}
+                                  {% for error in field.errors %}
+                                      <li>{{ field.label }}: {{ error }}</li>
+                                  {% endfor %}
+                              {% endfor %}
+                              {% for error in form.non_field_errors %}
+                                  <li>{{ error }}</li>
+                              {% endfor %}
+                          </ul>
+                      </div>
+                    {% endif %}
+
+                    <form method="post">
+                        {% csrf_token %}
+                      
+                        <div class="mb-3">
+                          {{ form.cancha.label_tag }}
+                          {{ form.cancha }}
+                        </div>
+                        {% if request.user.is_staff %}
+                            <div class="mb-3">
+                                <label for="id_nombre_cliente" class="form-label">Nombre del Cliente:</label>
+                                {{ form.nombre_cliente|add_class:"form-control" }}
+                            </div>
+                        {% endif %}
+                        <div class="mb-3">
+                          {{ form.fecha.label_tag }}
+                          {{ form.fecha }}
+                        </div>
+                      
+                        <div class="mb-3">
+                          {{ form.horario.label_tag }}
+                          {{ form.horario }}
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                          <button type="submit" class="btn btn-primary">Reservar</button>
+                      
+                          {% if request.user.is_staff %}
+                            <a href="{% url 'reservas_admin' %}" class="btn btn-secondary">Cancelar</a>
+                          {% else %}
+                            <a href="{% url 'mis_reservas' %}" class="btn btn-secondary">Cancelar</a>
+                          {% endif %}
+                        </div>
+                      </form>
+                                  
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const canchaInput = document.querySelector("#id_cancha");
+    const fechaInput = document.querySelector("#id_fecha");
+    const horarioSelect = document.querySelector("#id_horario");
+
+    function cargarHorarios() {
+        const cancha = canchaInput.value;
+        const fecha = fechaInput.value;
+
+        if (cancha && fecha) {
+            fetch(`/ajax/horarios/?cancha_id=${cancha}&fecha=${fecha}`)
+                .then(res => res.json())
+                .then(data => {
+                    horarioSelect.innerHTML = '';
+                    if (data.horarios && data.horarios.length > 0) {
+                        data.horarios.forEach(h => {
+                            const option = document.createElement('option');
+                            option.value = h.valor;
+                            option.textContent = h.texto;
+                            horarioSelect.appendChild(option);
+                        });
+                    } else {
+                        const option = document.createElement('option');
+                        option.textContent = 'Sin horarios disponibles';
+                        horarioSelect.appendChild(option);
+                    }
+                });
+        }
+    }
+
+    canchaInput.addEventListener("change", cargarHorarios);
+    fechaInput.addEventListener("change", cargarHorarios);
+});
+</script>
+
+       
+{% endblock %}

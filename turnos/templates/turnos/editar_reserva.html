@@ -1,0 +1,54 @@
+{% extends 'turnos/base.html' %}
+{% load form_extras %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-warning text-white text-center">
+                    <h4 class="mb-0">Editar Reserva</h4>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            {{ form.cancha.label_tag }}
+                            {{ form.cancha|add_class:"form-select" }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.fecha.label_tag }}
+                            {{ form.fecha|add_class:"form-control" }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.horario.label_tag }}
+                            {{ form.horario|add_class:"form-select" }}
+                        </div>
+                        {% if request.user.is_staff %}
+                        <div class="mb-3">
+                            {{ form.nombre_cliente.label_tag }}
+                            {{ form.nombre_cliente|add_class:"form-control" }}
+                        </div>
+                        {% endif %}
+
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-success">Guardar cambios</button>
+                            {% if request.user.is_staff %}
+                            <a href="{% url 'reservas_admin' %}" class="btn btn-secondary">Cancelar</a>
+                            {% else %}
+                            <a href="{% url 'mis_reservas' %}" class="btn btn-secondary">Cancelar</a>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

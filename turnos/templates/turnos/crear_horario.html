@@ -1,0 +1,13 @@
+{% extends 'turnos/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Cargar Horario Disponible</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Guardar</button>
+        <a href="{% url 'reservas_admin' %}" class="btn btn-secondary">Volver</a>
+    </form>
+</div>
+{% endblock %}

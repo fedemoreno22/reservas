@@ -1,0 +1,74 @@
+{% extends 'turnos/base.html' %}
+{% block content %}
+<h2>Reservas (Admin)</h2>
+
+<form method="get" class="row g-3 mb-4">
+  <div class="col-auto">
+    <input type="date" name="fecha" class="form-control" value="{{ fecha }}">
+  </div>
+  <div class="col-auto">
+    <select name="cancha" class="form-select">
+      <option value="">Todas las canchas</option>
+      {% for cancha in canchas %}
+        <option value="{{ cancha.id }}" {% if cancha.id|stringformat:"s" == cancha_id %}selected{% endif %}>
+          {{ cancha.nombre }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-auto">
+    <select name="usuario" class="form-select">
+      <option value="">Todos los clientes</option>
+      {% for u in usuarios %}
+        <option value="{{ u.id }}" {% if u.id|stringformat:"s" == usuario_id %}selected{% endif %}>
+          {{ u.username }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-auto">
+    <button type="submit" class="btn btn-primary">Filtrar</button>
+    <a href="{% url 'reservar_turno' %}" class="btn btn-success">Reservar</a>
+  </div>
+</form>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Cliente</th>
+      <th>Cancha</th>
+      <th>Fecha</th>
+      <th>Hora inicio</th>
+      <th>Hora fin</th>
+      <th>Acción</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for reserva in reservas %}
+    <tr>
+      <td>
+        {% if reserva.nombre_cliente %}
+          {{ reserva.nombre_cliente }}
+        {% elif reserva.usuario %}
+          {{ reserva.usuario.get_full_name|default:reserva.usuario.username }}
+        {% else %}
+          <em>Sin cliente</em>
+        {% endif %}
+      </td>      
+      <td>{{ reserva.cancha.nombre }}</td>
+      <td>{{ reserva.fecha|date:"d/m/Y" }}</td>
+      <td>{{ reserva.hora_inicio }}</td>
+      <td>{{ reserva.hora_fin }}</td>
+      <td>
+        <form method="post" action="{% url 'cancelar_reserva' reserva.id %}" onsubmit="return confirmarCancelacion();">
+          {% csrf_token %}
+          <a href="{% url 'editar_reserva' reserva.id %}" class="btn btn-sm btn-warning">Editar</a>
+          <button type="submit" class="btn btn-sm btn-danger">Cancelar</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

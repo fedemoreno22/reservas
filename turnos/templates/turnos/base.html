@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reserva de Canchas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a href="{% url 'portada' %}">
+        <img src="{% static 'img/logo01.png' %}" alt="Logo" height="60">
+      </a>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ms-auto">
+          {% if user.is_authenticated %}
+          <span class="navbar-text me-3 text-white">
+            Hola, {{ user.get_full_name|default:user.username }}
+          </span>
+            {% if user.is_staff %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'reservas_admin' %}">Ver todas las reservas</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'crear_horario' %}">Cargar Horarios</a>
+              </li>
+            {% endif %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'mis_reservas' %}">Mis reservas</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'logout' %}">Cerrar sesión</a>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'login' %}">Iniciar sesión</a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+  
+<div class="container mt-4">
+    {% block content %}{% endblock %}
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- JS de Bootstrap -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Script para cerrar automáticamente los mensajes -->
+<script>
+  setTimeout(() => {
+    let alerts = document.querySelectorAll('.alert');
+    alerts.forEach(el => {
+      let bsAlert = new bootstrap.Alert(el);
+      bsAlert.close();
+    });
+  }, 4000); // 4000 milisegundos = 4 segundos
+</script>
+<script>
+    function confirmarCancelacion() {
+      return confirm("¿Estás seguro de que querés cancelar esta reserva?");
+    }
+</script>  
+<script>
+    function confirmarCancelacion() {
+      return confirm("¿Estás seguro de cancelar esta reserva?");
+    }
+  </script>
+  
+</body>
+<!--
+  {% if messages %}
+<div class="container mt-3">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+-->
+
+
+</html>
