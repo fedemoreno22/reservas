@@ -22,11 +22,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', default='your secret key')
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 # Detectar el host de Render automáticamente
-RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
-if RENDER_EXTERNAL_HOSTNAME:
-    ALLOWED_HOSTS = [RENDER_EXTERNAL_HOSTNAME, 'localhost', '127.0.0.1']
-else:
-    ALLOWED_HOSTS = ['*']  # Solo para pruebas locales
+ALLOWED_HOSTS = ['reservas-1a7y.onrender.com', 'localhost', '127.0.0.1']
 
 # Application definition
 
