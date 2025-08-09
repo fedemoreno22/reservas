@@ -10,34 +10,23 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
-import dj_database_url, os
+import os
 from pathlib import Path
+import dj_database_url
 
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Seguridad
+SECRET_KEY = os.environ.get('SECRET_KEY', default='your secret key')
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-v+*nyv^&(bo0x(she!kt)vnzj2e6(gg16^sib^($5*r(h879es'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-# This production code might break development mode, so we check whether we're in DEBUG mode
-if not DEBUG:
-    # Tell Django to copy static assets into a path called `staticfiles` (this is specific to Render)
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-    # Enable the WhiteNoise storage backend, which compresses static files to reduce disk use
-    # and renames the files with unique names for each version to support long-term caching
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-    
-ALLOWED_HOSTS = []
-
+# Detectar el host de Render automáticamente
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS = [RENDER_EXTERNAL_HOSTNAME, 'localhost', '127.0.0.1']
+else:
+    ALLOWED_HOSTS = ['*']  # Solo para pruebas locales
 
 # Application definition
 
@@ -65,8 +54,6 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'reservas.urls'
 
-import os
-
 
 TEMPLATES = [
     {
@@ -90,10 +77,12 @@ WSGI_APPLICATION = 'reservas.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# Configuración de Base de Datos para Render
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgresql://postgres:postgres@localhost:5432/reservas',
-        conn_max_age=600
+        default=os.getenv('DATABASE_URL', 'postgresql://postgres:postgres@localhost:5432/reservas'),
+        conn_max_age=600,
+        ssl_require=True
     )
 }
 
@@ -127,23 +116,26 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Archivos multimedia
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+if not DEBUG:
+    # Tell Django to copy statics to the `staticfiles` directory
+    # in your application directory on Render.
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-LANGUAGE_CODE = 'es'
-
-TIME_ZONE = 'UTC'
-
+# Configuración internacionalización
+LANGUAGE_CODE = 'es-es'
+TIME_ZONE = 'America/Argentina/Buenos_Aires'
 USE_I18N = True
-
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
-
-STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -151,8 +143,9 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'reservar_turno'
-LOGOUT_REDIRECT_URL = 'login'
+# Configuración de login
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
