@@ -24,6 +24,10 @@ DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 # Detectar el host de Render automáticamente
 ALLOWED_HOSTS = ['reservas-1a7y.onrender.com', 'localhost', '127.0.0.1']
 
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -35,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'turnos',
     'widget_tweaks',
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 MIDDLEWARE = [
@@ -69,6 +75,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'reservas.wsgi.application'
 
+import os
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dzwwahjgu',
+    'API_KEY': '659636819951459',
+    'API_SECRET': 'tQITaA7LlP2czq1CmeX-twEGDcY'
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
