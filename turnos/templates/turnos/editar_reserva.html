@@ -1,4 +1,6 @@
 {% extends 'turnos/base.html' %}
+{% load static %}
+
 {% load form_extras %}
 
 {% block content %}
@@ -51,4 +53,20 @@
         </div>
     </div>
 </div>
+
+<style>
+    /* Adaptación móvil */
+    @media (max-width: 768px) {
+        .card {
+            margin: 10px;
+        }
+        .form-label {
+            font-size: 14px;
+        }
+        .btn {
+            width: 48%;
+        }
+    }
+</style>
+
 {% endblock %}

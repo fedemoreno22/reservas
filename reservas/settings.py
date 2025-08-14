@@ -25,6 +25,7 @@ DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 ALLOWED_HOSTS = ['reservas-1a7y.onrender.com', 'localhost', '127.0.0.1']
 
 
+
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api

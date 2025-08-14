@@ -17,6 +17,8 @@
     </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
+  {% if request.resolver_match.url_name != 'login' %}
+  <!-- Menú normal -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
       <a class="navbar-brand d-flex align-items-center"  href="{% url 'portada' %}">
@@ -60,6 +62,7 @@
       </div>
     </div>
   </nav>
+  {% endif %}
 
 <!-- Contenido -->
 <main class="flex-grow-1 py-4">
@@ -70,7 +73,7 @@
 
 <!-- Footer -->
 <footer class="bg-dark text-white text-center py-3 mt-auto">
-    <small>© 2025 Reservas de Canchas</small>
+    <small>© 2025 SoftwareTripleM</small>
 </footer>
 
 <!-- JS de Bootstrap -->
