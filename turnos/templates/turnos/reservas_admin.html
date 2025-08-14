@@ -1,6 +1,9 @@
 {% extends 'turnos/base.html' %}
+{% load static %}
+
+{% block title %}Reservas (Admin){% endblock %}
+
 {% block content %}
-<h2>Reservas (Admin)</h2>
 
 <form method="get" class="row g-3 mb-4">
   <div class="col-auto">
@@ -33,7 +36,7 @@
 </form>
 
 <table class="table table-striped">
-  <thead>
+  <thead class="table-dark">
     <tr>
       <th>Cliente</th>
       <th>Cancha</th>

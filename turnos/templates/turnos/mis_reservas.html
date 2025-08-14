@@ -1,6 +1,9 @@
 {% extends 'turnos/base.html' %}
+{% load static %}
+
+{% block title %}Mis Reservas{% endblock %}
+
 {% block content %}
-<h2>Mis reservas</h2>
 
 {% if reservas %}
     <form method="get" class="row g-3 mb-3">  
@@ -26,7 +29,7 @@
 
   
   <table class="table table-striped">
-    <thead>
+    <thead class="table-dark">
       <tr>
         <th>Cliente</th>
         <th>Cancha</th>
@@ -57,7 +60,9 @@
     </tbody>
   </table>
 {% else %}
-  <p>No tenés reservas todavía.</p>
+   <div class="alert alert-info text-center">
+      No tienes reservas registradas.
+  </div>
 {% endif %}
 
 {% endblock %}

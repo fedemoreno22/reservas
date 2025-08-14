@@ -282,7 +282,7 @@ def editar_reserva(request, reserva_id):
     else:
         form = EditarReservaForm(initial={
             'cancha': reserva.cancha,
-            'fecha': reserva.fecha,
+            'fecha': reserva.fecha.strftime('%Y-%m-%d'),
             'nombre_cliente': reserva.nombre_cliente,
         })
         form.cargar_horarios_disponibles(reserva.cancha.id, reserva.fecha, reserva.id)

@@ -24,6 +24,7 @@ DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 # Detectar el host de Render automáticamente
 ALLOWED_HOSTS = ['reservas-1a7y.onrender.com', 'localhost', '127.0.0.1']
 
+
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
@@ -104,16 +105,16 @@ else:
     }
 
 
-#DATABASES = {
- #   'default': {
-  #      'ENGINE': 'django.db.backends.postgresql',
-   #     'NAME': 'dbturno',
-    #    'USER': 'postgres',
-     #   'PASSWORD':'postgres',
-      #  'HOST':'127.0.0.1',
-       # 'PORT': '5432',
-    #}
-#}
+""" DATABASES = {
+   'default': {
+      'ENGINE': 'django.db.backends.postgresql',
+      'NAME': 'dbturno',
+      'USER': 'postgres',
+      'PASSWORD':'postgres',
+      'HOST':'127.0.0.1',
+      'PORT': '5432',
+    }
+} """
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
