@@ -11,13 +11,20 @@
             <h4 class="fw-bold">Iniciar Sesión</h4>
         </div>
 
-        {% if messages %}
+       {% if messages %}
             {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">
-                    {{ message }}
-                </div>
+                {% if "login" in message.tags or "logout" in message.tags %}
+                    <div class="alert 
+                        {% if message.tags == "success" %}alert-success
+                        {% elif message.tags == "error" or message.tags == "danger" %}alert-danger
+                        {% elif message.tags == "warning" %}alert-warning
+                        {% else %}alert-info{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endif %}
             {% endfor %}
         {% endif %}
+
 
         <form method="post" action="{% url 'login' %}">
             {% csrf_token %}

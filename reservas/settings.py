@@ -24,8 +24,6 @@ DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 # Detectar el host de Render automáticamente
 ALLOWED_HOSTS = ['reservas-1a7y.onrender.com', 'localhost', '127.0.0.1']
 
-
-
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api

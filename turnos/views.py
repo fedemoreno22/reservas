@@ -13,8 +13,11 @@ from .forms import ReservaTurnoForm
 from django.http import JsonResponse
 from django.contrib.admin.views.decorators import staff_member_required
 from datetime import datetime, time, timedelta
+from django.utils.timezone import now
+from django.db import models
+from django.db.models import Q
 
-@login_required
+""" @login_required
 def reservas_admin(request):
     print("Entró a la vista reservas_admin")  # 👈 TEMPORAL
     if not request.user.is_staff:
@@ -44,6 +47,27 @@ def reservas_admin(request):
         'usuario_id': usuario_id,
         'canchas': canchas,
         'usuarios': usuarios,
+    }) """
+
+@login_required
+def reservas_admin(request):
+    hoy = now().date()
+    hora_actual = now().time()
+
+    reservas_futuras = Reserva.objects.filter(
+        models.Q(fecha__gt=hoy) |
+        models.Q(fecha=hoy, hora_inicio__gt=hora_actual)
+    ).order_by('fecha', 'hora_inicio')
+
+    reservas_pasadas = Reserva.objects.filter(
+        models.Q(fecha__lt=hoy) |
+        models.Q(fecha=hoy, hora_inicio__lte=hora_actual)
+    ).order_by('-fecha', '-hora_inicio')
+
+    return render(request, 'turnos/reservas_admin.html', {
+        'reservas_futuras': reservas_futuras,
+        'reservas_pasadas': reservas_pasadas,
+         "canchas": Cancha.objects.all()
     })
 
 @login_required
@@ -96,7 +120,7 @@ def reservar_turno(request):
                     reserva.usuario = request.user
 
                 reserva.save()
-                messages.success(request, "Tu turno fue reservado correctamente.")
+                messages.success(request, "Reserva creada con éxito.", extra_tags="reserva")
                 return redirect('mis_reservas' if not request.user.is_staff else 'reservas_admin')
         else:
             # En caso de error de validación, intentar precargar horarios de nuevo
@@ -142,35 +166,34 @@ class CustomLoginView(LoginView):
     def form_valid(self, form):
         response = super().form_valid(form)
         # Solo este mensaje personalizado
-        messages.success(self.request, f"¡Bienvenido, {self.request.user.username}! Ya podés reservar tu cancha 🎉")
+        messages.success(self.request, f"¡Bienvenido, {self.request.user.username}! Ya podés reservar tu cancha 🎉" , extra_tags="login")
         return response
 
 def logout_view(request):
     logout(request)
-    messages.info(request, "Sesión cerrada correctamente.")
+    messages.info(request, "Sesión cerrada correctamente.", extra_tags="logout")
     return redirect('portada')
 
 @login_required
 def mis_reservas(request):
-    reservas = Reserva.objects.filter(usuario=request.user).order_by('-fecha', '-hora_inicio')
+    hoy = now().date()
+    hora_actual = now().time()
 
-    # Filtros
-    fecha_busqueda = request.GET.get('fecha')
-    cancha_id = request.GET.get('cancha')
+    reservas_futuras = Reserva.objects.filter(
+        usuario=request.user,
+    ).filter(
+        Q(fecha__gt=hoy) | Q(fecha=hoy, hora_inicio__gte=hora_actual)
+    ).order_by('fecha', 'hora_inicio')
 
-    if fecha_busqueda:
-        reservas = reservas.filter(fecha=fecha_busqueda)
+    reservas_pasadas = Reserva.objects.filter(
+        usuario=request.user,
+        fecha__lt=hoy
+    ).order_by('-fecha', '-hora_inicio')
 
-    if cancha_id:
-        reservas = reservas.filter(cancha__id=cancha_id)
-
-    canchas = Cancha.objects.all()
-
-    return render(request, 'turnos/mis_reservas.html', {
-        'reservas': reservas,
-        'fecha_busqueda': fecha_busqueda,
-        'cancha_id': cancha_id,
-        'canchas': canchas
+    return render(request, "turnos/mis_reservas.html", {
+        "reservas_futuras": reservas_futuras,
+        "reservas_pasadas": reservas_pasadas,
+        "canchas": Cancha.objects.all()
     })
 
 @login_required
@@ -182,7 +205,7 @@ def cancelar_reserva(request, reserva_id):
         return redirect('mis_reservas')
 
     reserva.delete()
-    messages.success(request, "La reserva fue cancelada.")
+    messages.warning(request, "La reserva fue cancelada.", extra_tags="reserva")
     return redirect('reservas_admin' if request.user.is_staff else 'mis_reservas')
 
 
